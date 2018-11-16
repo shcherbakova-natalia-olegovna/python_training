@@ -14,23 +14,20 @@ class ContactHelper:
 
     def fill_contact_form(self, contact):
         wd = self.app.wd
-        wd.find_element_by_name("firstname").click()
-        wd.find_element_by_name("firstname").clear()
-        wd.find_element_by_name("firstname").send_keys(contact.name)
-        wd.find_element_by_name("middlename").click()
-        wd.find_element_by_name("middlename").clear()
-        wd.find_element_by_name("middlename").send_keys(contact.middlename)
-        wd.find_element_by_name("lastname").click()
-        wd.find_element_by_name("lastname").clear()
-        wd.find_element_by_name("lastname").send_keys(contact.surname)
-        wd.find_element_by_name("nickname").click()
-        wd.find_element_by_name("nickname").clear()
-        wd.find_element_by_name("nickname").send_keys(contact.nick)
-        wd.find_element_by_name("title").click()
-        wd.find_element_by_name("title").clear()
-        wd.find_element_by_name("title").send_keys(contact.title)
+        self.change_contact_field("firstname", contact.name)
+        self.change_contact_field("middlename", contact.middlename)
+        self.change_contact_field("lastname", contact.surname)
+        self.change_contact_field("nickname", contact.nick)
+        self.change_contact_field("title", contact.title)
 
-    def edit_contact(self, contact):
+    def change_contact_field(self, contact_field_name, text):
+        wd = self.app.wd
+        if text is not None:
+            wd.find_element_by_name(contact_field_name).click()
+            wd.find_element_by_name(contact_field_name).clear()
+            wd.find_element_by_name(contact_field_name).send_keys(text)
+
+    def modify_contact(self, contact):
         wd = self.app.wd
         wd.find_element_by_name("selected[]").click()
         wd.find_element_by_xpath("//img[@alt='Edit']").click()
