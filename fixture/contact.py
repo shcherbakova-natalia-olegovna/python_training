@@ -41,11 +41,16 @@ class ContactHelper:
 
     def delete_first_contact(self):
         wd = self.app.wd
-        self.app.return_to_home_page()
+        self.app.open_home_page()
         wd.find_element_by_name("selected[]").click()
         wd.find_element_by_xpath("//input[@value='Delete']").click()
-        wd.switch_to_alert().accept()
-        self.app.return_to_home_page()
+        #wd.switch_to_alert().accept()
+        wd.switch_to.alert.accept()
+        #Здесь добавлен лишний переход на страницу со списком групп, без этого перехода не выполняются assert
+        #в тесте удаления первого контакта (контакт визуально удаляется, но при этом попадает в новый список контактов)
+        #После добавления перехода на страницу со списком групп - ошибка в тесте удаления контакта пропала
+        self.open_groups_page()
+        self.app.open_home_page()
 
     def count(self):
         wd = self.app.wd
@@ -57,11 +62,15 @@ class ContactHelper:
         self.app.return_to_home_page()
         contacts = []
         for element in wd.find_elements_by_css_selector("tr[name=entry]"):
-            last_name = wd.find_element_by_css_selector("td:nth-child(2)").text
-            first_name = wd.find_element_by_css_selector("td:nth-child(3)").text
+            cells = element.find_elements_by_tag_name("td")
+            last_name = cells[1].text
+            first_name = cells[2].text
             id = element.find_element_by_name("selected[]").get_attribute("value")
             contacts.append(Contact(name=first_name, surname=last_name, id=id))
         return contacts
 
-
+    def open_groups_page(self):
+        wd = self.app.wd
+        if not (wd.current_url.endswith("/groups.php") and len(wd.find_elements_by_name("new")) > 0):
+            wd.find_element_by_link_text("groups").click()
 
