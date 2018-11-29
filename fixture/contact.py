@@ -79,10 +79,8 @@ class ContactHelper:
                 last_name = cells[1].text
                 first_name = cells[2].text
                 id = element.find_element_by_name("selected[]").get_attribute("value")
-                all_phones = cells[5].text.splitlines()
-
-                self.contact_cache.append(Contact(name=first_name, surname=last_name, id=id, homephone=all_phones[0],
-                                                  workphone=all_phones[2], mobilephone=all_phones[1], secondaryphone=all_phones[3]))
+                all_phones = cells[5].text
+                self.contact_cache.append(Contact(name=first_name, surname=last_name, id=id, all_phones_from_home_page=all_phones))
         return list(self.contact_cache)
 
     def open_groups_page(self):
