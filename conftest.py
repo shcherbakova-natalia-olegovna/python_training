@@ -9,6 +9,7 @@ from fixture.db import DbFixture
 fixture = None
 target = None
 
+
 def load_config(file):
     global target
     if target is None:
@@ -16,7 +17,6 @@ def load_config(file):
         with open(config_file) as f:
             target = json.load(f)
     return target
-
 
 
 @pytest.fixture
@@ -32,7 +32,7 @@ def app(request):
 
 @pytest.fixture(scope="session")
 def db(request):
-    db_confing = load_config(request.config.getoption("--target"))['db']
+    db_config = load_config(request.config.getoption("--target"))['db']
     dbfixture = DbFixture(host=db_config['host'], name=db_config['name'], user=db_config['user'], password=db_config['password'] )
     def fin():
         dbfixture.destroy()
