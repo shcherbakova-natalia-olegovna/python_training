@@ -45,6 +45,16 @@ class ContactHelper:
         self.app.open_home_page()
         self.contact_cache = None
 
+    def modify_contact_by_id(self, id, contact):
+        wd = self.app.wd
+        self.app.open_home_page()
+        #wd.find_element_by_css_selector("input[value='%s']" % id).click()
+        wd.find_element_by_css_selector("a[href='edit.php?id=%s']" % id).click()
+        self.fill_contact_form(contact)
+        wd.find_element_by_xpath("(//input[@name='update'])[2]").click()
+        self.app.open_home_page()
+        self.contact_cache = None
+
     def delete_first_contact(self):
         self.delete_contact_by_index(0)
 
@@ -52,6 +62,20 @@ class ContactHelper:
         wd = self.app.wd
         self.app.open_home_page()
         wd.find_elements_by_name("selected[]")[index].click()
+        wd.find_element_by_xpath("//input[@value='Delete']").click()
+        #wd.switch_to_alert().accept()
+        wd.switch_to.alert.accept()
+        #Здесь добавлен лишний переход на страницу со списком групп, без этого перехода не выполняются assert
+        #в тесте удаления первого контакта (контакт визуально удаляется, но при этом попадает в новый список контактов)
+        #После добавления перехода на страницу со списком групп - ошибка в тесте удаления контакта пропала
+        self.open_groups_page()
+        self.app.open_home_page()
+        self.contact_cache = None
+
+    def delete_contact_by_id(self, id):
+        wd = self.app.wd
+        self.app.open_home_page()
+        wd.find_element_by_css_selector("input[value='%s']" % id).click()
         wd.find_element_by_xpath("//input[@value='Delete']").click()
         #wd.switch_to_alert().accept()
         wd.switch_to.alert.accept()
