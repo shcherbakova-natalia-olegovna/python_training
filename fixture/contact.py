@@ -1,5 +1,7 @@
 from model.contact import Contact
 import re
+from selenium.webdriver.support.ui import Select
+import random
 
 
 class ContactHelper:
@@ -54,6 +56,27 @@ class ContactHelper:
         wd.find_element_by_xpath("(//input[@name='update'])[2]").click()
         self.app.open_home_page()
         self.contact_cache = None
+
+    def add_contact_to_group(self, id_contact):
+        wd = self.app.wd
+        self.app.open_home_page()
+        # select contact by id_contact
+        wd.find_element_by_css_selector("input[value='%s']" % id_contact).click()
+        # open list of groups
+        wd.find_element_by_name("to_group").click()
+        Select(wd.find_element_by_name("to_group")).select_by_visible_text("test")
+        wd.find_element_by_xpath("//div[4]/select/option[3]").click()
+        wd.find_element_by_name("add").click()
+        wd.find_element_by_xpath("//div[@id='content']/div/i/a").click()
+        self.app.return_to_home_page()
+        self.contact_cache = None
+
+    def del_contact_from_group(self, db, app):
+        wd = self.app.wd
+        self.app.open_home_page()
+        wd.find_element_by_name("group").click()
+        Select(wd.find_element_by_name("group")).select_by_visible_text("test")
+        pass
 
     def delete_first_contact(self):
         self.delete_contact_by_index(0)
