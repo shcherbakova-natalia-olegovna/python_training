@@ -57,25 +57,31 @@ class ContactHelper:
         self.app.open_home_page()
         self.contact_cache = None
 
-    def add_contact_to_group(self, id_contact):
+    def add_contact_to_group(self, contact, group):
         wd = self.app.wd
         self.app.open_home_page()
         # select contact by id_contact
-        wd.find_element_by_css_selector("input[value='%s']" % id_contact).click()
+        wd.find_element_by_css_selector("input[value='%s']" % contact.id).click()
         # open list of groups
         wd.find_element_by_name("to_group").click()
-        Select(wd.find_element_by_name("to_group")).select_by_visible_text("test")
-        wd.find_element_by_xpath("//div[4]/select/option[3]").click()
+        Select(wd.find_element_by_name("to_group")).select_by_visible_text(group.name)
+        wd.find_element_by_xpath("(//option[@value=%s])[2]" % group.id).click()
         wd.find_element_by_name("add").click()
         wd.find_element_by_xpath("//div[@id='content']/div/i/a").click()
         self.app.return_to_home_page()
-        self.contact_cache = None
 
-    def del_contact_from_group(self, db, app):
+
+    def del_contact_from_group(self, contact, group):
         wd = self.app.wd
         self.app.open_home_page()
         wd.find_element_by_name("group").click()
-        Select(wd.find_element_by_name("group")).select_by_visible_text("test")
+        Select(wd.find_element_by_name("to_group")).select_by_visible_text(group.name)
+        wd.find_element_by_xpath("//option[@value=%s]" % group.id).click()
+        wd.find_element_by_id("%s" % contact.id).click()
+        self.accept_next_alert = True
+        wd.find_element_by_xpath("//input[@value='Delete']").click()
+        wd.switch_to.alert.accept()
+        self.app.return_to_home_page()
         pass
 
     def delete_first_contact(self):
